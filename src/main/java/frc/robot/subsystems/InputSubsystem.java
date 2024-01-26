@@ -28,13 +28,13 @@ public class InputSubsystem extends SubsystemBase {
 
     public InputSubsystem() {
         try {
-            xboxController = new XboxController(Constants.XBOX_CONTROLLER); 
+            xboxController = new XboxController(Constants.XBOX_PORT); 
         } catch(Exception e) {
             System.out.format("Exception caught while initializing input subsystem: %s\n", e.getMessage());
         }
 
         try {
-            joystickController = new Joystick(Constants.JOYSTICK_CONTROLLER); 
+            joystickController = new Joystick(Constants.JOYSTICK_PORT); 
         } catch(Exception e) {
             System.out.format("Exception caught while initializing input subsystem: %s\n", e.getMessage());
         }
