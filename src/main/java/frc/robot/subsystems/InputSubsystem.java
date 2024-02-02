@@ -26,6 +26,10 @@ public class InputSubsystem extends SubsystemBase {
     private double leftRight;
     private double rotation;
 
+    private boolean fireButtonIsDepressed;
+    private boolean intakeButtonIsDepressed;
+    private boolean accelerateFlywheelButtonIsDepressed;
+
     public InputSubsystem() {
         try {
             xboxController = new XboxController(Constants.XBOX_PORT); 
@@ -43,6 +47,11 @@ public class InputSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
+        
+        fireButtonIsDepressed = false;
+        intakeButtonIsDepressed = false;
+        accelerateFlywheelButtonIsDepressed = false;
+
         double xboxFrontBack = 0.0;
         double xboxLeftRight = 0.0;
         double xboxRotation = 0.0;
@@ -51,12 +60,32 @@ public class InputSubsystem extends SubsystemBase {
         double joystickRotation = 0.0;
         
         if (xboxController != null) {
+
+            //TODO: Update with driver's preferred firing button
+            fireButtonIsDepressed = xboxController.getAButtonPressed();
+
+            //TODO: Update with driver's preferred intake button
+            intakeButtonIsDepressed = xboxController.getBButtonPressed();
+
+            //TODO: Update with driver's preferred flywheel acceleration button
+            accelerateFlywheelButtonIsDepressed = xboxController.getXButtonPressed();
+
             xboxFrontBack = xboxController.getLeftY();
             xboxLeftRight = xboxController.getLeftX();
             xboxRotation = xboxController.getRightX();
         }
 
         if (joystickController != null) {
+
+            //TODO: Update with driver's preferred firing button
+            fireButtonIsDepressed = joystickController.getTriggerPressed();
+
+            //TODO: Update with driver's preferred intake button
+            intakeButtonIsDepressed = joystickController.getRawButtonPressed(1);
+
+            //TODO: Update with driver's preferred flywheel acceleration button
+            accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(2);
+
             joystickFrontBack = joystickController.getY();
             joystickLeftRight = joystickController.getX();
             joystickRotation = joystickController.getZ();
@@ -88,4 +117,27 @@ public class InputSubsystem extends SubsystemBase {
     public double getRotation() {
         return rotation;
     }
+
+    /**
+     * Returns whether the firing button was pressed
+     */
+    public boolean getFiringButton() {
+        return fireButtonIsDepressed;
+    }
+
+    /**
+     * Returns whether the flywheel acceleration button was pressed
+     */
+    public boolean getFlywheelAccelerationButton() {
+        return accelerateFlywheelButtonIsDepressed;
+    }
+
+
+    /**
+     * Returns whether the intake button was pressed
+     */
+    public boolean getIntakeButton() {
+        return intakeButtonIsDepressed;
+    }
+
 }
