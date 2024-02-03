@@ -85,13 +85,16 @@ public final class Constants {
 
   // TODO: Replace with actual intake duration
   public final static double INTAKE_DURATION_SECONDS = 3.0;
-  // TODO: Replace with actual acceleration duration
-  public final static double ACCELERATION_DURATION_SECONDS = 3.0;
+  // TODO: Replace with actual firing duration
+  public final static double FIRING_DURATION_SECONDS = 3.0;
 
   // TODO: Replace with actual intake speed
   public final static double FLYWHEEL_INTAKE_SPEED = -10;
+  // TODO: Replace with actual Accelerating goal speed
+  public final static double FLYWHEEL_FIRING_SPEED = 10;
 
   // TODO: Replace with actual maximum RPM
   public final static double MAX_FLYWHEEL_RPM = 1;
+
 
 }
