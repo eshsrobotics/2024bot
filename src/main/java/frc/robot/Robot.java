@@ -4,100 +4,61 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * This sample program shows how to control a motor using a joystick. In the operator control part
+ * of the program, the joystick is read and the value is written to the motor.
+ *
+ * <p>Joystick analog values range from -1 to 1 and motor controller inputs also range from -1 to 1
+ * making it easy to work together.
+ *
+ * <p>In addition, the encoder value of an encoder connected to ports 0 and 1 is consistently sent
+ * to the Dashboard.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  public static final int rightFlyWheelCanId = 7;
+  public static final int leftFlyWheelCanId = 9; 
+  private static final int kJoystickPort = 0;
+  // private static final int kEncoderPortA = 0;
+  // private static final int kEncoderPortB = 1;
 
-  private RobotContainer m_robotContainer;
+  // private Joystick m_joystick;
+  // private Encoder m_encoder;
+  private CANSparkMax rightFlyWheel;
+  private CANSparkMax leftFlyWheel;
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_joystick = new Joystick(kJoystickPort);
+    // m_encoder = new Encoder(kEncoderPortA, kEncoderPortB);
+    rightFlyWheel = new CANSparkMax(rightFlyWheelCanId, MotorType.kBrushless);
+    leftFlyWheel = new CANSparkMax(leftFlyWheelCanId, MotorType.kBrushless);
+    // Use SetDistancePerPulse to set the multiplier for GetDistance
+    // This is set up assuming a 6 inch wheel with a 360 CPR encoder.
+    // m_encoder.setDistancePerPulse((Math.PI * 6) / 360.0);
   }
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
+  /*
+   * The RobotPeriodic function is called every control packet no matter the
+   * robot mode.
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    // SmartDashboard.putNumber("Encoder", m_encoder.getDistance());
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+  public void teleopPeriodic() {
+    rightFlyWheel.set(m_joystick.getY());
+    leftFlyWheel.set (-m_joystick.getY());
   }
-
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-  }
-
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
-
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
-
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
-
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
 }
