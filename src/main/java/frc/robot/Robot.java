@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
   // private static final int kEncoderPortA = 0;
   // private static final int kEncoderPortB = 1;
 
-  // private Joystick m_joystick;
+   private Joystick m_joystick;
   // private Encoder m_encoder;
   private CANSparkMax rightFlyWheel;
   private CANSparkMax leftFlyWheel;
@@ -58,7 +58,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    double power = m_joystick.getY();
+    if (Math.abs(power) <= .05) {power = 0;}
     rightFlyWheel.set(m_joystick.getY());
     leftFlyWheel.set (-m_joystick.getY());
+
   }
 }
