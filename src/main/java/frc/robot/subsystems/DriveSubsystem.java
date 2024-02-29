@@ -56,6 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem(InputSubsystem inputSubsystem) {
+      System.out.println("Drive is initialized");
     this.inputSubsystem = inputSubsystem;
     frontLeft = new CANSparkMax(Constants.FRONT_LEFT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
     frontRight = new CANSparkMax(Constants.FRONT_RIGHT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
@@ -67,6 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    System.out.println("Driving");
     drive.driveCartesian(inputSubsystem.getFrontBack(), inputSubsystem.getLeftRight(), inputSubsystem.getRotation(), gyro.getRotation2d());
     // This method will be called once per scheduler run
   }

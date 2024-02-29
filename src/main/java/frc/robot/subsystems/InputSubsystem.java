@@ -76,7 +76,7 @@ public class InputSubsystem extends SubsystemBase {
         }
 
         if (joystickController != null) {
-
+            System.out.println("Reading input from joystick");
             //TODO: Update with driver's preferred firing button
             fireButtonIsDepressed = joystickController.getTriggerPressed();
 
@@ -101,6 +101,7 @@ public class InputSubsystem extends SubsystemBase {
      * The user's desired front-back motion
      */
     public double getFrontBack() {
+        System.out.println("Input subsystem is asked for speed");
         return frontBack;
     }
 
