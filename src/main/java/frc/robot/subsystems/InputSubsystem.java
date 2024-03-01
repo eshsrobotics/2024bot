@@ -76,7 +76,6 @@ public class InputSubsystem extends SubsystemBase {
         }
 
         if (joystickController != null) {
-            System.out.println("Reading input from joystick");
             //TODO: Update with driver's preferred firing button
             fireButtonIsDepressed = joystickController.getTriggerPressed();
 
@@ -86,7 +85,7 @@ public class InputSubsystem extends SubsystemBase {
             //TODO: Update with driver's preferred flywheel acceleration button
             accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(2);
 
-            joystickFrontBack = joystickController.getY();
+            joystickFrontBack = -joystickController.getY();
             joystickLeftRight = joystickController.getX();
             joystickRotation = joystickController.getZ();
         }
@@ -95,13 +94,21 @@ public class InputSubsystem extends SubsystemBase {
         frontBack = MathUtil.clamp(xboxFrontBack + joystickFrontBack, -1, 1);
         leftRight = MathUtil.clamp(xboxLeftRight + joystickLeftRight, -1, 1);
         rotation = MathUtil.clamp(xboxRotation + joystickRotation, -1, 1);
+        if (Math.abs(frontBack) <= 0.05) {
+            frontBack = 0;
+        }
+        if (Math.abs(leftRight) <= 0.05) {
+            leftRight = 0;
+        }
+        if (Math.abs(rotation) <= 0.05) {
+            rotation = 0;
+        }
     }
 
     /**
      * The user's desired front-back motion
      */
     public double getFrontBack() {
-        System.out.println("Input subsystem is asked for speed");
         return frontBack;
     }
 

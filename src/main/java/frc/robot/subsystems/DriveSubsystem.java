@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,6 +28,7 @@ public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax frontRight;
   private CANSparkMax backLeft;
   private CANSparkMax backRight;
+  private PWMMotorController testMotor;
 
   /**
    * To make the robot drive, we must use the Mecanum formula to calculate all
@@ -62,13 +65,18 @@ public class DriveSubsystem extends SubsystemBase {
     frontRight = new CANSparkMax(Constants.FRONT_RIGHT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
     backLeft = new CANSparkMax(Constants.BACK_LEFT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
     backRight = new CANSparkMax(Constants.BACK_RIGHT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
+    frontLeft.setInverted(true);
+    backLeft.setInverted(true);
+    testMotor = new Spark(0);
     drive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
     gyro = new ADXRS450_Gyro();
   }
 
   @Override
   public void periodic() {
-    System.out.println("Driving");
+    
+    System.out.println(inputSubsystem.getFrontBack());
+    // testMotor.set(inputSubsystem.getFrontBack());
     drive.driveCartesian(inputSubsystem.getFrontBack(), inputSubsystem.getLeftRight(), inputSubsystem.getRotation(), gyro.getRotation2d());
     // This method will be called once per scheduler run
   }
