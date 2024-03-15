@@ -79,7 +79,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     
     // testMotor.set(inputSubsystem.getFrontBack());
-    drive.driveCartesian(inputSubsystem.getFrontBack(), 0, 0, gyro.getRotation2d());
+    drive.driveCartesian(inputSubsystem.getFrontBack(), inputSubsystem.getLeftRight(), inputSubsystem.getRotation());
     // This method will be called once per scheduler run
   }
 
