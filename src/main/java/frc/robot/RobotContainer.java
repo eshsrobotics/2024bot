@@ -10,6 +10,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.InputSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -25,6 +26,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final InputSubsystem inputSubsystem;
   private final DriveSubsystem driveSubsystem;
+  private final ShooterSubsystem shooterSubsystem;
   
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -36,6 +38,7 @@ public class RobotContainer {
     configureBindings();
     inputSubsystem = new InputSubsystem();
     driveSubsystem = new DriveSubsystem(inputSubsystem); 
+    shooterSubsystem = new ShooterSubsystem(inputSubsystem); 
   }
 
   /**

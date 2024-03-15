@@ -21,15 +21,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  /**
-   * If an Xbox controller is plugged in, we assume it is in this port
-   * 
-   * <p>
-   * WARNING: If using an Xbox controller and a joystick at the same time,
-   * plug the Xbox controller in first
-   * </p>
-   */
-  public final static int XBOX_PORT = 0;
 
   /**
    * If a joystick is plugged in, we assume it is in this port
@@ -57,8 +48,14 @@ public final class Constants {
    * 
    * TODO: Update with actual IDs
    */
-  public final static int LEFT_FLYWHEEL_MOTOR_CAN_ID = 5;
-  public final static int RIGHT_FLYWHEEL_MOTOR_CAN_ID = 6;
+  public final static int LEFT_FLYWHEEL_MOTOR_CAN_ID = 6;
+  public final static int RIGHT_FLYWHEEL_MOTOR_CAN_ID = 5;
+
+
+  /**
+   * Comp can ID 
+   */
+  public final static int COMPRESSOR_CAN_ID = 0;
 
   /**
    * Pneumatic Control Module Port IDs for forward and reverse channel of
@@ -66,8 +63,12 @@ public final class Constants {
    * 
    * TODO: Update with actual port IDs
    */
-  public final static int FLYWHEEL_SOLENOID_FORWARD_CHANNEL = 1;
-  public final static int FLYWHEEL_SOLENOID_REVERSE_CHANNEL = 2;
+  public final static int FLYWHEEL_LEFT_SOLENOID_FORWARD_CHANNEL = 1;
+  public final static int FLYWHEEL_LEFT_SOLENOID_REVERSE_CHANNEL = 0;
+
+  
+  public final static int FLYWHEEL_RIGHT_SOLENOID_FORWARD_CHANNEL = 2;
+  public final static int FLYWHEEL_RIGHT_SOLENOID_REVERSE_CHANNEL = 3;
 
   /**
    * Strings for the different possible flywheel states.
@@ -84,9 +85,9 @@ public final class Constants {
    */
 
   // TODO: Replace with actual intake duration
-  public final static double INTAKE_DURATION_SECONDS = 100.0;
+  public final static double INTAKE_DURATION_SECONDS = 5.0;
   // TODO: Replace with actual firing duration
-  public final static double FIRING_DURATION_SECONDS = 100.0;
+  public final static double FIRING_DURATION_SECONDS = 5.0;
 
   // TODO: Replace with actual intake speed
   public final static double FLYWHEEL_INTAKE_SPEED = -10;

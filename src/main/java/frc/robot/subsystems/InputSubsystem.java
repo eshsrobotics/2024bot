@@ -32,12 +32,6 @@ public class InputSubsystem extends SubsystemBase {
 
     public InputSubsystem() {
         try {
-            xboxController = new XboxController(Constants.XBOX_PORT); 
-        } catch(Exception e) {
-            System.out.format("Exception caught while initializing input subsystem: %s\n", e.getMessage());
-        }
-
-        try {
             joystickController = new Joystick(Constants.JOYSTICK_PORT); 
         } catch(Exception e) {
             System.out.format("Exception caught while initializing input subsystem: %s\n", e.getMessage());
@@ -59,41 +53,27 @@ public class InputSubsystem extends SubsystemBase {
         double joystickLeftRight = 0.0;
         double joystickRotation = 0.0;
         
-        if (xboxController != null) {
-
-            //TODO: Update with driver's preferred firing button
-            fireButtonIsDepressed = xboxController.getAButtonPressed();
-
-            //TODO: Update with driver's preferred intake button
-            intakeButtonIsDepressed = xboxController.getBButtonPressed();
-
-            //TODO: Update with driver's preferred flywheel acceleration button
-            accelerateFlywheelButtonIsDepressed = xboxController.getXButtonPressed();
-
-            xboxFrontBack = xboxController.getLeftY();
-            xboxLeftRight = xboxController.getLeftX();
-            xboxRotation = xboxController.getRightX();
-        }
-
         if (joystickController != null) {
             //TODO: Update with driver's preferred firing button
-            fireButtonIsDepressed = joystickController.getTriggerPressed();
+            fireButtonIsDepressed = joystickController.getRawButtonPressed(6);
 
             //TODO: Update with driver's preferred intake button
-            intakeButtonIsDepressed = joystickController.getRawButtonPressed(1);
+            intakeButtonIsDepressed = joystickController.getRawButtonPressed(5);
 
             //TODO: Update with driver's preferred flywheel acceleration button
-            accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(2);
+            accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(6);
 
             joystickFrontBack = -joystickController.getY();
+            
+
             joystickLeftRight = joystickController.getX();
             joystickRotation = joystickController.getZ();
         }
 
         // Intelligently combine simultaneous inputs
-        frontBack = MathUtil.clamp(xboxFrontBack + joystickFrontBack, -1, 1);
-        leftRight = MathUtil.clamp(xboxLeftRight + joystickLeftRight, -1, 1);
-        rotation = MathUtil.clamp(xboxRotation + joystickRotation, -1, 1);
+        frontBack = MathUtil.clamp(joystickFrontBack, -1, 1);
+        leftRight = MathUtil.clamp(joystickLeftRight, -1, 1);
+        rotation = MathUtil.clamp(joystickRotation, -1, 1);
         if (Math.abs(frontBack) <= 0.05) {
             frontBack = 0;
         }

@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,7 +26,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private RelativeEncoder rightFlywheelEncoder;
 
   // Solenoid for pneumatic piston feeder in shooting system
-  private DoubleSolenoid flywheelDoubleSolenoid;
+  private DoubleSolenoid flywheelDoubleSolenoidLeft;
+  private DoubleSolenoid flywheelDoubleSolenoidRight;
+
+  private Compressor compressor;
 
   // String tracking our current state
   private String currentFlywheelState;
@@ -43,11 +47,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(InputSubsystem inputSubsystem) {
+
+    
+    compressor = new Compressor(Constants.COMPRESSOR_CAN_ID, PneumaticsModuleType.CTREPCM);
+    
     this.inputSubsystem = inputSubsystem;
     leftFlywheelMotor = new CANSparkMax(Constants.LEFT_FLYWHEEL_MOTOR_CAN_ID, CANSparkLowLevel.MotorType.kBrushless);
     rightFlywheelMotor = new CANSparkMax(Constants.RIGHT_FLYWHEEL_MOTOR_CAN_ID, CANSparkLowLevel.MotorType.kBrushless);
-    flywheelDoubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.FLYWHEEL_SOLENOID_FORWARD_CHANNEL,
-        Constants.FLYWHEEL_SOLENOID_REVERSE_CHANNEL);
+    rightFlywheelMotor.setInverted(true);
+    flywheelDoubleSolenoidLeft = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.FLYWHEEL_LEFT_SOLENOID_FORWARD_CHANNEL,
+        Constants.FLYWHEEL_LEFT_SOLENOID_REVERSE_CHANNEL);
+    flywheelDoubleSolenoidRight = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.FLYWHEEL_RIGHT_SOLENOID_FORWARD_CHANNEL,
+        Constants.FLYWHEEL_RIGHT_SOLENOID_REVERSE_CHANNEL);
+
+    flywheelDoubleSolenoidLeft.set(Value.kOff);
+    flywheelDoubleSolenoidRight.set(Value.kOff);
 
     leftFlywheelEncoder = leftFlywheelMotor.getEncoder();
     rightFlywheelEncoder = rightFlywheelMotor.getEncoder();
@@ -71,10 +85,16 @@ public class ShooterSubsystem extends SubsystemBase {
     switch (currentFlywheelState) {
 
       case Constants.FLYWHEEL_IDLING:
-        if (inputSubsystem.getFlywheelAccelerationButton()) {
-          currentFlywheelState = Constants.FLYWHEEL_ACCELERATING;
-          rampUpFlywheelMotors(Constants.FLYWHEEL_FIRING_SPEED);
+        if (inputSubsystem.getFiringButton()) {
+          flywheelDoubleSolenoidLeft.set(Value.kForward);
+          flywheelDoubleSolenoidRight.set(Value.kForward);
+          currentFlywheelState = Constants.FLYWHEEL_INTAKING;
+          stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
+          leftFlywheelMotor.set(-Constants.FLYWHEEL_INTAKE_SPEED);
+          rightFlywheelMotor.set(-Constants.FLYWHEEL_INTAKE_SPEED);
         } else if (inputSubsystem.getIntakeButton()) {
+          flywheelDoubleSolenoidLeft.set(Value.kReverse);
+          flywheelDoubleSolenoidRight.set(Value.kReverse);
           currentFlywheelState = Constants.FLYWHEEL_INTAKING;
           stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
           leftFlywheelMotor.set(Constants.FLYWHEEL_INTAKE_SPEED);
@@ -92,9 +112,11 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case Constants.FLYWHEEL_ACCELERATING:
-        rampUpFlywheelMotors(Constants.FLYWHEEL_FIRING_SPEED);
-        if (isFlywheelReady()) {
-          currentFlywheelState = Constants.FLYWHEEL_READY_TO_FIRE;
+        if (stopStateTimer < Timer.getFPGATimestamp()) {
+          currentFlywheelState = Constants.FLYWHEEL_IDLING;
+          leftFlywheelMotor.stopMotor();
+          rightFlywheelMotor.stopMotor();
+          stopStateTimer = 0;
         }
         break;
 
@@ -107,12 +129,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
       case Constants.FLYWHEEL_FIRING:
         fireFlywheel();
-        flywheelDoubleSolenoid.set(Value.kForward);
+        flywheelDoubleSolenoidLeft.set(Value.kForward);
+        flywheelDoubleSolenoidRight.set(Value.kForward);
         if (stopStateTimer < Timer.getFPGATimestamp()) {
           currentFlywheelState = Constants.FLYWHEEL_DECELERATING;
           slowFlywheelMotors();
           stopStateTimer = 0;
-          flywheelDoubleSolenoid.set(Value.kReverse);
+          flywheelDoubleSolenoidLeft.set(Value.kReverse);
+          flywheelDoubleSolenoidRight.set(Value.kReverse);
         }
         break;
 

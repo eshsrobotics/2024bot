@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.InputMismatchException;
+
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
@@ -76,9 +78,8 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     
-    System.out.println(inputSubsystem.getFrontBack());
     // testMotor.set(inputSubsystem.getFrontBack());
-    drive.driveCartesian(inputSubsystem.getFrontBack(), inputSubsystem.getLeftRight(), inputSubsystem.getRotation(), gyro.getRotation2d());
+    drive.driveCartesian(inputSubsystem.getFrontBack(), 0, 0, gyro.getRotation2d());
     // This method will be called once per scheduler run
   }
 
