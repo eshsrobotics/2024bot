@@ -67,6 +67,7 @@ public class DriveSubsystem extends SubsystemBase {
     backRight = new CANSparkMax(Constants.BACK_RIGHT_CAN_ID, CANSparkLowLevel.MotorType.kBrushed);
     frontLeft.setInverted(true);
     backLeft.setInverted(true);
+    backRight.setInverted(false);
     testMotor = new Spark(0);
     drive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
     gyro = new ADXRS450_Gyro();
