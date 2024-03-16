@@ -68,13 +68,13 @@ public class InputSubsystem extends SubsystemBase {
 
             joystickLeftRight = joystickController.getX();
             if (joystickController.getRawButton(9)) {
-                joystickRotation = -0.15;
-            } else if (joystickController.getRawButton(10)) {
-                joystickRotation = 0.15;
-            } else if (joystickController.getRawButton(11)) {
                 joystickRotation = -0.3;
-            } else if (joystickController.getRawButton(12)) {
+            } else if (joystickController.getRawButton(10)) {
                 joystickRotation = 0.3;
+            } else if (joystickController.getRawButton(11)) {
+                joystickRotation = -0.5;
+            } else if (joystickController.getRawButton(12)) {
+                joystickRotation = 0.5;
             }
         }
         System.out.println(joystickRotation);

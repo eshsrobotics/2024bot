@@ -60,8 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelDoubleSolenoidRight = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.FLYWHEEL_RIGHT_SOLENOID_FORWARD_CHANNEL,
         Constants.FLYWHEEL_RIGHT_SOLENOID_REVERSE_CHANNEL);
 
-    flywheelDoubleSolenoidLeft.set(Value.kOff);
-    flywheelDoubleSolenoidRight.set(Value.kOff);
+    flywheelDoubleSolenoidLeft.set(Value.kReverse);
+    flywheelDoubleSolenoidRight.set(Value.kReverse);
 
     leftFlywheelEncoder = leftFlywheelMotor.getEncoder();
     rightFlywheelEncoder = rightFlywheelMotor.getEncoder();
