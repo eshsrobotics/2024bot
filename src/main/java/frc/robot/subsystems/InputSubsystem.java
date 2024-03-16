@@ -67,8 +67,17 @@ public class InputSubsystem extends SubsystemBase {
             
 
             joystickLeftRight = joystickController.getX();
-            joystickRotation = joystickController.getZ();
+            if (joystickController.getRawButton(9)) {
+                joystickRotation = -0.15;
+            } else if (joystickController.getRawButton(10)) {
+                joystickRotation = 0.15;
+            } else if (joystickController.getRawButton(11)) {
+                joystickRotation = -0.3;
+            } else if (joystickController.getRawButton(12)) {
+                joystickRotation = 0.3;
+            }
         }
+        System.out.println(joystickRotation);
 
         // Intelligently combine simultaneous inputs
         frontBack = MathUtil.clamp(joystickFrontBack, -1, 1);
@@ -76,7 +85,7 @@ public class InputSubsystem extends SubsystemBase {
         rotation = MathUtil.clamp(joystickRotation, -1, 1);
         if (Math.abs(frontBack) <= 0.05) {
             frontBack = 0;
-        }
+        }                                                                                                                                           
         if (Math.abs(leftRight) <= 0.05) {
             leftRight = 0;
         }
