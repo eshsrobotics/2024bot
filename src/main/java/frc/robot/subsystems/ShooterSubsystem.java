@@ -128,88 +128,27 @@ public class ShooterSubsystem extends SubsystemBase {
         }
         break;
 
-      case Constants.FLYWHEEL_ACCELERATING:
-        if (stopStateTimer < Timer.getFPGATimestamp()) {
-          currentFlywheelState = Constants.FLYWHEEL_IDLING;
-          leftFlywheelMotor.stopMotor();
-          rightFlywheelMotor.stopMotor();
-          stopStateTimer = 0;
-        }
-        break;
-
-      case Constants.FLYWHEEL_READY_TO_FIRE:
-        rampUpFlywheelMotors(Constants.FLYWHEEL_FIRING_SPEED);
-        if (inputSubsystem.getLowGoalFiringButton()) {
-          currentFlywheelState = Constants.FLYWHEEL_FIRING;
-        }
-        break;
-
-      case Constants.FLYWHEEL_FIRING:
-        fireFlywheel();
-        flywheelDoubleSolenoidLeft.set(Value.kForward);
-        flywheelDoubleSolenoidRight.set(Value.kForward);
-        if (stopStateTimer < Timer.getFPGATimestamp()) {
-          currentFlywheelState = Constants.FLYWHEEL_DECELERATING;
-          slowFlywheelMotors();
-          stopStateTimer = 0;
-          flywheelDoubleSolenoidLeft.set(Value.kReverse);
-          flywheelDoubleSolenoidRight.set(Value.kReverse);
-        }
-        break;
-
-      case Constants.FLYWHEEL_DECELERATING:
-        if (slowFlywheelMotors()) {
-          currentFlywheelState = Constants.FLYWHEEL_IDLING;
-        }
-        break;
     }
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
 
-  /**
-   * Used to accelerate flywheel motors to desired speed, and to maintain the
-   * maximum speed
-   * 
-   * @param goalSpeed
-   */
-  private void rampUpFlywheelMotors(double goalSpeed) {
-    double leftVelocity = leftFlywheelEncoder.getVelocity();
-    double rightVelocity = rightFlywheelEncoder.getVelocity();
-    leftFlywheelMotor.set(leftMotorFeedforward.calculate(leftVelocity));
-    rightFlywheelMotor.set(rightMotorFeedforward.calculate(rightVelocity));
-  }
+  public void fire(double firingSpeed) {
 
-  /**
-   * Called after firing to safely decelerate flywheel
-   * 
-   * @return returns if flywheel has reached a full stop
-   */
-  private boolean slowFlywheelMotors() {
-    return false;
-    // TODO: Write the feedforward loop that will go here
-    // Maybe use PID here, as goal is to reach a stop speed, not accelerate and
-    // maintain a speed
-  }
-
-  /**
-   * Called when told to fire. Maintains current flywheel speed,
-   * 
-   * @return returns if flywheel has reached a full stop
-   */
-  private void fireFlywheel() {
-    rampUpFlywheelMotors(Constants.FLYWHEEL_FIRING_SPEED);
-    if (stopStateTimer == 0) {
-      stopStateTimer = Timer.getFPGATimestamp() + Constants.FIRING_DURATION_SECONDS;
+    if (firingSpeed > 0) {
+      flywheelDoubleSolenoidLeft.set(Value.kForward);
+      flywheelDoubleSolenoidRight.set(Value.kForward);
+    } else {
+      flywheelDoubleSolenoidLeft.set(Value.kReverse);
+      flywheelDoubleSolenoidRight.set(Value.kReverse);
     }
+    originalIntakingSpeed = firingSpeed;
+    leftFlywheelMotor.set(originalIntakingSpeed);
+    rightFlywheelMotor.set(originalIntakingSpeed);
+
+    stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
+
+    currentFlywheelState = Constants.FLYWHEEL_INTAKING;
   }
 
-  private boolean isFlywheelReady() {
-    // TODO: Tell us if the flywheel has reached it's goal shooting speed, and is
-    // ready to fire a disc
-    return false;
-  }
+
 }
