@@ -65,7 +65,7 @@ public class InputSubsystem extends SubsystemBase {
             //TODO: Update with driver's preferred flywheel acceleration button
             accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(6);
 
-            joystickFrontBack = -joystickController.getY();
+            joystickFrontBack = -joystickController.getY()+0.15;
             
 
             joystickLeftRight = joystickController.getX();
