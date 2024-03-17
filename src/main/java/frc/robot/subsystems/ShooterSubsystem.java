@@ -37,6 +37,12 @@ public class ShooterSubsystem extends SubsystemBase {
   // Timer to track durations of states with set runtimes
   private double stopStateTimer;
 
+  // When we transition from the FLYWHEEL_IDLING to FLYWHEEL_INTAKING
+  // state, this variable remembers the speed we originally set
+  // (it could range from -1.0, meaning shooting full forward, to +1.0,
+  // meaning itaking full backward.)
+  private double originalIntakingSpeed;
+
   // Feedforward controllers to manage speeds of flywheels & their respective
   // values
   private double leftKs, leftKv, rightKs, rightKv;
@@ -76,6 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     currentFlywheelState = Constants.FLYWHEEL_IDLING;
     stopStateTimer = 0;
+    originalIntakingSpeed = 0;
 
   }
 
@@ -85,20 +92,30 @@ public class ShooterSubsystem extends SubsystemBase {
     switch (currentFlywheelState) {
 
       case Constants.FLYWHEEL_IDLING:
-        if (inputSubsystem.getFiringButton()) {
+        if (inputSubsystem.getLowGoalFiringButton()) {
           flywheelDoubleSolenoidLeft.set(Value.kForward);
           flywheelDoubleSolenoidRight.set(Value.kForward);
           currentFlywheelState = Constants.FLYWHEEL_INTAKING;
           stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
-          leftFlywheelMotor.set(-Constants.FLYWHEEL_INTAKE_SPEED);
-          rightFlywheelMotor.set(-Constants.FLYWHEEL_INTAKE_SPEED);
+          originalIntakingSpeed = Constants.FLYWHEEL_FIRING_SPEED_LOW;
+          leftFlywheelMotor.set(originalIntakingSpeed);
+          rightFlywheelMotor.set(originalIntakingSpeed);
+        } else if (inputSubsystem.getHighGoalFiringButton()) {
+          flywheelDoubleSolenoidLeft.set(Value.kForward);
+          flywheelDoubleSolenoidRight.set(Value.kForward);
+          currentFlywheelState = Constants.FLYWHEEL_INTAKING;
+          stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
+          originalIntakingSpeed = Constants.FLYWHEEL_FIRING_SPEED;
+          leftFlywheelMotor.set(originalIntakingSpeed);
+          rightFlywheelMotor.set(originalIntakingSpeed);
         } else if (inputSubsystem.getIntakeButton()) {
           flywheelDoubleSolenoidLeft.set(Value.kReverse);
           flywheelDoubleSolenoidRight.set(Value.kReverse);
           currentFlywheelState = Constants.FLYWHEEL_INTAKING;
           stopStateTimer = Timer.getFPGATimestamp() + Constants.INTAKE_DURATION_SECONDS;
-          leftFlywheelMotor.set(Constants.FLYWHEEL_INTAKE_SPEED);
-          rightFlywheelMotor.set(Constants.FLYWHEEL_INTAKE_SPEED);
+          originalIntakingSpeed = Constants.FLYWHEEL_INTAKE_SPEED;
+          leftFlywheelMotor.set(originalIntakingSpeed);
+          rightFlywheelMotor.set(originalIntakingSpeed);
         }
         break;
 
@@ -122,7 +139,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
       case Constants.FLYWHEEL_READY_TO_FIRE:
         rampUpFlywheelMotors(Constants.FLYWHEEL_FIRING_SPEED);
-        if (inputSubsystem.getFiringButton()) {
+        if (inputSubsystem.getLowGoalFiringButton()) {
           currentFlywheelState = Constants.FLYWHEEL_FIRING;
         }
         break;

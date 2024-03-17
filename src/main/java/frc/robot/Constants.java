@@ -90,9 +90,10 @@ public final class Constants {
   public final static double FIRING_DURATION_SECONDS = 5.0;
 
   // TODO: Replace with actual intake speed
-  public final static double FLYWHEEL_INTAKE_SPEED = -10;
+  public final static double FLYWHEEL_INTAKE_SPEED = -1.0;
   // TODO: Replace with actual Accelerating goal speed
-  public final static double FLYWHEEL_FIRING_SPEED = 10;
+  public final static double FLYWHEEL_FIRING_SPEED = 1.0;
+  public final static double FLYWHEEL_FIRING_SPEED_LOW = 0.2;
 
   // TODO: Replace with actual maximum RPM
   public final static double MAX_FLYWHEEL_RPM = 0;

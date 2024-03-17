@@ -26,7 +26,8 @@ public class InputSubsystem extends SubsystemBase {
     private double leftRight;
     private double rotation;
 
-    private boolean fireButtonIsDepressed;
+    private boolean lowGoalFireButtonIsDepressed;
+    private boolean highGoalFireButtonIsDepressed;
     private boolean intakeButtonIsDepressed;
     private boolean accelerateFlywheelButtonIsDepressed;
 
@@ -42,7 +43,7 @@ public class InputSubsystem extends SubsystemBase {
     public void periodic() {
         super.periodic();
         
-        fireButtonIsDepressed = false;
+        lowGoalFireButtonIsDepressed = false;
         intakeButtonIsDepressed = false;
         accelerateFlywheelButtonIsDepressed = false;
 
@@ -54,8 +55,9 @@ public class InputSubsystem extends SubsystemBase {
         double joystickRotation = 0.0;
         
         if (joystickController != null) {
-            //TODO: Update with driver's preferred firing button
-            fireButtonIsDepressed = joystickController.getRawButtonPressed(6);
+            
+            lowGoalFireButtonIsDepressed = joystickController.getRawButtonPressed(6);
+            highGoalFireButtonIsDepressed = joystickController.getRawButtonPressed(1);
 
             //TODO: Update with driver's preferred intake button
             intakeButtonIsDepressed = joystickController.getRawButtonPressed(5);
@@ -72,9 +74,9 @@ public class InputSubsystem extends SubsystemBase {
             } else if (joystickController.getRawButton(10)) {
                 joystickRotation = 0.3;
             } else if (joystickController.getRawButton(11)) {
-                joystickRotation = -0.5;
+                joystickRotation = -0.7;
             } else if (joystickController.getRawButton(12)) {
-                joystickRotation = 0.5;
+                joystickRotation = 0.7;
             }
         }
         System.out.println(joystickRotation);
@@ -118,8 +120,12 @@ public class InputSubsystem extends SubsystemBase {
     /**
      * Returns whether the firing button was pressed
      */
-    public boolean getFiringButton() {
-        return fireButtonIsDepressed;
+    public boolean getLowGoalFiringButton() {
+        return lowGoalFireButtonIsDepressed;
+    }
+
+    public boolean getHighGoalFiringButton() {
+        return highGoalFireButtonIsDepressed;
     }
 
     /**
