@@ -69,4 +69,8 @@ public class RobotContainer {
     // An example command will be run in autonomous
     return Autos.getSimpleShootCommand(shooterSubsystem);
   }
+
+  public void setAutonState(boolean isAutonRunning) {
+    inputSubsystem.setAutonState(isAutonRunning);
+  }
 }

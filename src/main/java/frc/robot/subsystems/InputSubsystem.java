@@ -26,12 +26,14 @@ public class InputSubsystem extends SubsystemBase {
     private double leftRight;
     private double rotation;
 
+    private boolean autonRunning;
     private boolean lowGoalFireButtonIsDepressed;
     private boolean highGoalFireButtonIsDepressed;
     private boolean intakeButtonIsDepressed;
     private boolean accelerateFlywheelButtonIsDepressed;
 
     public InputSubsystem() {
+        autonRunning = false;
         try {
             joystickController = new Joystick(Constants.JOYSTICK_PORT); 
         } catch(Exception e) {
@@ -65,8 +67,20 @@ public class InputSubsystem extends SubsystemBase {
             //TODO: Update with driver's preferred flywheel acceleration button
             accelerateFlywheelButtonIsDepressed = joystickController.getRawButtonPressed(6);
 
-            joystickFrontBack = -joystickController.getY()+0.15;
-            
+            // Apparently the joystick that we were competing with did not give
+            // consistent results when the Y-axis was zeroed out. We added a
+            // kludge to overcome this (which is not the same as a deadzone,
+            // though maybe we should using one of those instead) and ran into
+            // the problem of our kludge affecting the drive during auton!
+            //
+            // InputSubsystem.periodic() always runs, whether auton is running
+            // or not, but we only want to employ the kludge here if we are
+            // fully in teleop.
+            double joystickKludge = 0.15;
+            if (autonRunning) {
+                joystickKludge = 0;
+            }
+            joystickFrontBack = -joystickController.getY() + joystickKludge;          
 
             joystickLeftRight = joystickController.getX();
             if (joystickController.getRawButton(9)) {
@@ -141,6 +155,10 @@ public class InputSubsystem extends SubsystemBase {
      */
     public boolean getIntakeButton() {
         return intakeButtonIsDepressed;
+    }
+
+    public void setAutonState(boolean isAutonRunning) {
+        autonRunning = isAutonRunning;
     }
 
 }
